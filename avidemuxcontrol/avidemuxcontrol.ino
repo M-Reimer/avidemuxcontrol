@@ -41,6 +41,7 @@ unsigned long lasttime;
 void HandleShuttle(char aPos) {
   unsigned long delay = 0;
 
+  // Select delay based on position
   if (aPos == 0)
     lasttime = millis();
   else if (abs(aPos) == 1)
@@ -48,6 +49,7 @@ void HandleShuttle(char aPos) {
   else
     delay = FAST_SHUTTLE_DELAY_MS;
 
+  // If delay has elapsed, then send the right keys based on position
   if (millis() - lasttime >= delay) {
     lasttime = millis();
     if (aPos == 1)
@@ -65,10 +67,13 @@ void HandleShuttle(char aPos) {
       Keyboard.release(KEY_LEFT_CTRL);
     }
   }
+
+  // LED output: Light LED for "fast shuttle"
+  IwitKnob.setLed(abs(aPos) == 2);
+
+  // Debugging output
   Serial.print("Shuttle: ");
   Serial.println((int)aPos);
-
-  IwitKnob.setLed(abs(aPos) == 2);
 }
 
 /************************/
@@ -79,11 +84,13 @@ const char JOG_LEFT = 1;
 const char JOG_RIGHT = 2;
 const char JOG_NEUTRAL = 3;
 void HandleJog(char aDir, bool aSingleFrame) {
+  // Send key press based on rotation direction and single frame mode
   if (aDir == JOG_LEFT)
     Keyboard.write(aSingleFrame ? KEY_LEFT_ARROW : KEY_DOWN_ARROW);
   else if (aDir == JOG_RIGHT)
     Keyboard.write(aSingleFrame ? KEY_RIGHT_ARROW : KEY_UP_ARROW);
 
+  // LED output: Light LED if single frame mode is active
   IwitKnob.setLed(aSingleFrame);
 }
 
