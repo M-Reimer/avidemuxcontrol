@@ -144,13 +144,9 @@ void loop() {
   }
   // Knob not pressed --> Jog
   else {
-    if (pos < 0) {
-      HandleJog(JOG_LEFT, singleframe);
-      IwitKnob.setPosition(pos + 1);
-    }
-    else if (pos > 0) {
-      HandleJog(JOG_RIGHT, singleframe);
-      IwitKnob.setPosition(pos - 1);
+    if (pos != 0) {
+      HandleJog((pos < 0) ? JOG_LEFT : JOG_RIGHT, singleframe);
+      IwitKnob.reset();
     }
     else
       HandleJog(JOG_NEUTRAL, singleframe);
