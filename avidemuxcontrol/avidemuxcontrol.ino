@@ -92,6 +92,12 @@ void HandleJog(char aDir, bool aSingleFrame) {
 
   // LED output: Light LED if single frame mode is active
   IwitKnob.setLed(aSingleFrame);
+
+  // Debugging output
+  if (aDir != JOG_NEUTRAL) {
+    Serial.print("Jog: ");
+    Serial.println((aDir == JOG_LEFT) ? "Left" : "Right");
+  }
 }
 
 /****************/
@@ -142,11 +148,7 @@ void loop() {
   lastbtn = btn;
 
   signed char pos = IwitKnob.getPosition();
-  if (pos != lastpos) {
-    Serial.print("Pos: ");
-    Serial.println(pos);
-  }
-  lastpos = pos;
+
   // Knob down --> Shuttle
   if (btn) {
     if (pos > 2) {
