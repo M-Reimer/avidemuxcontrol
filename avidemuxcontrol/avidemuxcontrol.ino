@@ -87,6 +87,7 @@ void setup() {
 
 bool lastbtn = false;
 bool singleframe = false;
+unsigned long lastsingleframetime;
 bool wasshuttle = false;
 signed char lastpos = 0;
 void loop() {
@@ -114,6 +115,9 @@ void loop() {
       }
       else
         singleframe = !singleframe;
+
+      if (singleframe)
+        lastsingleframetime = millis();
     }
   }
   lastbtn = btn;
@@ -145,10 +149,15 @@ void loop() {
   // Knob not pressed --> Jog
   else {
     if (pos != 0) {
+      lastsingleframetime = millis();
       HandleJog((pos < 0) ? JOG_LEFT : JOG_RIGHT, singleframe);
       IwitKnob.reset();
     }
     else
       HandleJog(JOG_NEUTRAL, singleframe);
+
+    //
+    if (singleframe && millis() - lastsingleframetime >= 10000)
+      singleframe = false;
   }
 }
