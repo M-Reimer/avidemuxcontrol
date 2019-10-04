@@ -20,6 +20,18 @@
 #include "IwitVolumeKnob.h"
 #include "HID-Project.h"
 
+// Timeout after which "single frame mode" is disabled automatically
+#define SINGLE_FRAME_TIMEOUT_MS 10000
+
+// Delay between sending the previous/next intra frame command
+// Used for "slow shuttle" (press, move one notch)
+#define SLOW_SHUTTLE_DELAY_MS   80
+
+// Delay between sending the backward/forward one minute command
+// Used for "fast shuttle" (press, move two notches)
+#define FAST_SHUTTLE_DELAY_MS   300
+
+
 
 /****************************/
 /* Shuttle feature handling */
@@ -32,9 +44,9 @@ void HandleShuttle(char aPos) {
   if (aPos == 0)
     lasttime = millis();
   else if (abs(aPos) == 1)
-    delay = 80;
+    delay = SLOW_SHUTTLE_DELAY_MS;
   else
-    delay = 300;
+    delay = FAST_SHUTTLE_DELAY_MS;
 
   if (millis() - lasttime >= delay) {
     lasttime = millis();
@@ -157,7 +169,7 @@ void loop() {
       HandleJog(JOG_NEUTRAL, singleframe);
 
     //
-    if (singleframe && millis() - lastsingleframetime >= 10000)
+    if (singleframe && millis() - lastsingleframetime >= SINGLE_FRAME_TIMEOUT_MS)
       singleframe = false;
   }
 }
