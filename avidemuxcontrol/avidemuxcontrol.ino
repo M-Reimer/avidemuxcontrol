@@ -20,13 +20,11 @@
 #include "IwitVolumeKnob.h"
 #include "HID-Project.h"
 
-void setup() {
-  Serial.begin(9600);
-  Keyboard.begin();
-  IwitKnob.begin();
-}
 
-// Shuttle changes land here
+/****************************/
+/* Shuttle feature handling */
+/****************************/
+
 unsigned long lasttime;
 void HandleShuttle(char aPos) {
   unsigned long delay = 0;
@@ -57,15 +55,34 @@ void HandleShuttle(char aPos) {
   }
   Serial.print("Shuttle: ");
   Serial.println((int)aPos);
+
+  IwitKnob.setLed(abs(aPos) == 2);
 }
+
+/************************/
+/* Jog feature handling */
+/************************/
 
 const char JOG_LEFT = 1;
 const char JOG_RIGHT = 2;
+const char JOG_NEUTRAL = 3;
 void HandleJog(char aDir, bool aSingleFrame) {
   if (aDir == JOG_LEFT)
     Keyboard.write(aSingleFrame ? KEY_LEFT_ARROW : KEY_DOWN_ARROW);
   else if (aDir == JOG_RIGHT)
     Keyboard.write(aSingleFrame ? KEY_RIGHT_ARROW : KEY_UP_ARROW);
+
+  IwitKnob.setLed(aSingleFrame);
+}
+
+/****************/
+/* Backend code */
+/****************/
+
+void setup() {
+  Serial.begin(9600);
+  Keyboard.begin();
+  IwitKnob.begin();
 }
 
 bool lastbtn = false;
@@ -124,8 +141,6 @@ void loop() {
     }
 
     HandleShuttle(pos);
-
-    IwitKnob.setLed(abs(pos) == 2);
   }
   // Knob not pressed --> Jog
   else {
@@ -137,7 +152,7 @@ void loop() {
       HandleJog(JOG_RIGHT, singleframe);
       IwitKnob.setPosition(pos - 1);
     }
-
-    IwitKnob.setLed(singleframe);
+    else
+      HandleJog(JOG_NEUTRAL, singleframe);
   }
 }
