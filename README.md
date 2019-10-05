@@ -10,6 +10,8 @@ It does this by sending hotkeys based on your input. This means that absolutely 
 
 For usage with Avidemux, you should use the rectangular device as the round one does not have noticeable notches. Having the notches really helps with moving through the frames.
 
+![](https://raw.githubusercontent.com/wiki/M-Reimer/avidemuxcontrol/images/iwit.jpg)
+
 Installation
 ------------
 
