@@ -1,5 +1,5 @@
 /*
-    Avidemux Control - USB rotary encoder controller
+    Avidemux Control - Jog/Shuttle for USB Volume Control device
     Copyright (C) 2019 Manuel Reimer <manuel.reimer@gmx.de>
 
     This program is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@
 /****************************/
 
 unsigned long lasttime;
+signed char lastpos = 0;
 void HandleShuttle(char aPos) {
   unsigned long delay = 0;
 
@@ -72,8 +73,11 @@ void HandleShuttle(char aPos) {
   IwitKnob.setLed(abs(aPos) == 2);
 
   // Debugging output
-  Serial.print("Shuttle: ");
-  Serial.println((int)aPos);
+  if (aPos != lastpos) {
+    Serial.print("Shuttle: ");
+    Serial.println((int)aPos);
+    lastpos = aPos;
+  }
 }
 
 /************************/
@@ -114,7 +118,6 @@ bool lastbtn = false;
 bool singleframe = false;
 unsigned long lastsingleframetime;
 bool wasshuttle = false;
-signed char lastpos = 0;
 void loop() {
   if (USBDevice.isSuspended()) {
     lastbtn = false;
